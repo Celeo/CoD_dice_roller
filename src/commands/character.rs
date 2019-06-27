@@ -18,7 +18,7 @@ pub fn character(context: &mut Context, message: &Message, args: Args) -> Comman
     let username = &message.author.name;
     let mut cs = CharacterStore::from_file(&LOAD_PATH).unwrap();
     let character = cs.get_mut(username);
-    if first_arg == "print" {
+    if first_arg == "print" || first_arg == "sheet" || first_arg == "show" {
         let response = MessageBuilder::new()
             .push_codeblock(&character, None)
             .build();

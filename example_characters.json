@@ -2,6 +2,12 @@
   "characters": [
     {
       "name": "Paul Roberts",
+      "health": {
+        "max": 8,
+        "bashing": 2,
+        "lethal": 0,
+        "aggravated": 1
+      },
       "stats": {
         "intelligence": 1,
         "wits": 3,

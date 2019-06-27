@@ -8,5 +8,5 @@ root:
   appenders:
     - stdout
 loggers:
-  dice_roller_bot:
+  cod_dice_roller:
     level: debug

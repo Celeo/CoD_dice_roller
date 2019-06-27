@@ -8,15 +8,66 @@ use std::{
     path::Path,
 };
 
+/// Represents a character's health.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Health {
+    max: u64,
+    bashing: u64,
+    lethal: u64,
+    aggravated: u64,
+}
+
+impl Health {
+    /// Construct new health tracker.
+    fn new() -> Self {
+        Health {
+            max: 0,
+            bashing: 0,
+            lethal: 0,
+            aggravated: 0,
+        }
+    }
+}
+
+impl fmt::Display for Health {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.max == 0 {
+            return writeln!(f, "No health info");
+        }
+        writeln!(f, "Health (max {}):", self.max)?;
+        let mut boxes = vec![];
+        for _ in 0..self.aggravated {
+            boxes.push("A");
+        }
+        for _ in 0..self.lethal {
+            boxes.push("L");
+        }
+        for _ in 0..self.bashing {
+            boxes.push("B");
+        }
+        for _ in 0..(self.max - self.aggravated - self.lethal - self.bashing) {
+            boxes.push(" ");
+        }
+        let mut table = Table::new();
+        table.add_row(boxes.iter().map(|b| cell!(b)).collect());
+        write!(f, "{}", table)?;
+        Ok(())
+    }
+}
+
 /// Represents a single player character.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Character {
     name: String,
     stats: HashMap<String, i64>,
+    health: Health,
 }
 
 impl fmt::Display for Character {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.stats.is_empty() {
+            return write!(f, "{}\n\nNo stats info", self.health);
+        }
         let mut table = Table::new();
         table.set_titles(row!["Name", "Value", "", "Name", "Value"]);
         let size = self.stats.len();
@@ -38,7 +89,7 @@ impl fmt::Display for Character {
             }
         }
         table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-        write!(f, "Your recorded stat values\n\n{}", table)
+        write!(f, "{}\nStats:\n{}", self.health, table)
     }
 }
 
@@ -58,6 +109,7 @@ impl Character {
         Character {
             name: name.to_owned(),
             stats: HashMap::new(),
+            health: Health::new(),
         }
     }
 

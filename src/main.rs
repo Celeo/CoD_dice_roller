@@ -52,7 +52,7 @@ fn setup_logger() {
                 Logger::builder()
                     .appender("stdout")
                     .additive(false)
-                    .build("dice_roller_bot", LevelFilter::Debug),
+                    .build("cod_dice_roller", LevelFilter::Debug),
             )
             .build(Root::builder().appender("stdout").build(LevelFilter::Warn))
             .unwrap();
