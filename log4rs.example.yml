@@ -1,0 +1,12 @@
+appenders:
+  stdout:
+    kind: console
+    encoder:
+      pattern: "{d} {h({l})} {m}{n}"
+root:
+  level: warn
+  appenders:
+    - stdout
+loggers:
+  dice_roller_bot:
+    level: debug

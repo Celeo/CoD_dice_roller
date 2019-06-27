@@ -1,0 +1,22 @@
+{
+  "characters": [
+    {
+      "name": "Paul Roberts",
+      "stats": {
+        "intelligence": 1,
+        "wits": 3,
+        "resolve": 3,
+        "strength": 3,
+        "dexterity": 3,
+        "stamina": 2,
+        "presence": 2,
+        "manipulation": 1,
+        "composure": 3,
+        "computer": 1,
+        "athletics": 4,
+        "occult": 1,
+        "expression": 1
+      }
+    }
+  ]
+}
