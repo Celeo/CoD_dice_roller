@@ -23,6 +23,7 @@ pub fn character(context: &mut Context, message: &Message, args: Args) -> Comman
             .push_codeblock(&character, None)
             .build();
         message.channel_id.say(&context.http, &response)?;
+        return Ok(());
     } else if first_arg == "edit" {
         if args.len() != 3 {
             message
@@ -43,7 +44,7 @@ pub fn character(context: &mut Context, message: &Message, args: Args) -> Comman
         };
         character.set_value(&stat_key, stat_value);
         message.react(&context, "👍")?;
+        cs.save(&LOAD_PATH).unwrap();
     }
-    cs.save(&LOAD_PATH).unwrap();
     Ok(())
 }
