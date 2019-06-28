@@ -25,6 +25,7 @@ You can also edit a character reference with the following commands:
 
 * !stats print|show
 * !stats edit <name> <value>
+* !stats bulk name1=value1 name2=value2 name3=value3 ...
 
 Then, you can roll using those references, like:
 

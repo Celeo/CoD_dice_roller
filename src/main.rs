@@ -18,7 +18,7 @@ use serenity::{
 use std::{env, path::Path};
 
 mod commands;
-use commands::{help::*, merit::*, roll::*, stats::*};
+use commands::{help::*, health::*, merit::*, roll::*, stats::*};
 
 mod util;
 
@@ -33,7 +33,7 @@ impl EventHandler for Handler {
 group!({
     name: "general",
     options: {},
-    commands: [help, merit, roll, stats]
+    commands: [help, health, merit, roll, stats]
 });
 
 fn setup_logger() {
