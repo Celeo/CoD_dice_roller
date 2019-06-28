@@ -18,7 +18,7 @@ use serenity::{
 use std::{env, path::Path};
 
 mod commands;
-use commands::{character::*, help::*, merit::*, roll::*};
+use commands::{help::*, merit::*, roll::*, stats::*};
 
 mod util;
 
@@ -33,7 +33,7 @@ impl EventHandler for Handler {
 group!({
     name: "general",
     options: {},
-    commands: [character, help, merit, roll]
+    commands: [help, merit, roll, stats]
 });
 
 fn setup_logger() {
@@ -74,6 +74,11 @@ fn main() {
         StandardFramework::new()
             .configure(|c| c.prefix("!").case_insensitivity(true))
             .group(&GENERAL_GROUP)
+            .after(|_context, _message, command_name, error| {
+                if let Err(why) = error {
+                    error!("Error in command '{}': {:?}", command_name, why);
+                }
+            })
             .on_dispatch_error(|_context, message, error| {
                 error!(
                     "Command error occurred in '{}': {:?}",

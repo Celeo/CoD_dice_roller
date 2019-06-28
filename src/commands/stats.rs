@@ -8,17 +8,18 @@ use serenity::{
 use crate::util::{constants::LOAD_PATH, characters::CharacterStore};
 
 #[command]
-pub fn character(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+pub fn stats(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let mut args = args;
     if args.is_empty() {
-        debug!("No args supplied to character command");
+        debug!("No args supplied to stats command");
         return Ok(());
     }
     let first_arg = args.single::<String>().unwrap();
     let username = &message.author.name;
     let mut cs = CharacterStore::from_file(&LOAD_PATH).unwrap();
     let character = cs.get_mut(username);
-    if first_arg == "print" || first_arg == "sheet" || first_arg == "show" {
+    debug!("Stats command, first arg is {}", first_arg);
+    if first_arg == "print" || first_arg == "show" {
         let response = MessageBuilder::new()
             .push_codeblock(&character, None)
             .build();
@@ -28,7 +29,7 @@ pub fn character(context: &mut Context, message: &Message, args: Args) -> Comman
         if args.len() != 3 {
             message
                 .channel_id
-                .say(&context.http, "`!character edit <stat_name> <stat_value>`")?;
+                .say(&context.http, "`!stats edit <stat_name> <stat_value>`")?;
             return Ok(());
         }
         let stat_key = args.single::<String>().unwrap();
@@ -42,9 +43,10 @@ pub fn character(context: &mut Context, message: &Message, args: Args) -> Comman
                 return Ok(());
             }
         };
+        debug!("Stats edit args are: {} | {}", stat_key, stat_value);
         character.set_value(&stat_key, stat_value);
-        message.react(&context, "👍")?;
-        cs.save(&LOAD_PATH).unwrap();
+        cs.save(&LOAD_PATH)?;
+        message.channel_id.say(&context.http, "Got it.")?;
     }
     Ok(())
 }

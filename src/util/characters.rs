@@ -66,18 +66,25 @@ pub struct Character {
 impl fmt::Display for Character {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.stats.is_empty() {
-            return write!(f, "{}\n\nNo stats info", self.health);
+            return write!(f, "No stats info");
         }
         let mut table = Table::new();
         table.set_titles(row!["Name", "Value", "", "Name", "Value"]);
         let size = self.stats.len();
         let half_rounded = f64::ceil(self.stats.len() as f64 / 2f64) as u64;
-        let items: Vec<_> = self.stats.iter().map(|(k, &v)| (k, v)).collect();
+        let mut items: Vec<_> = self.stats.iter().map(|(k, &v)| (k, v)).collect();
+        items.sort_by(|a, b| a.partial_cmp(b).unwrap());
         for index in 0..half_rounded {
             let index = index as usize;
             let index_upper = index + half_rounded as usize;
             if index_upper >= size {
-                table.add_row(row![items[index].0, items[index].1, "", "", "",]);
+                table.add_row(row![
+                    items[index].0,
+                    &format!("  {}", items[index].1),
+                    "",
+                    "",
+                    "",
+                ]);
             } else {
                 table.add_row(row![
                     items[index].0,
@@ -89,7 +96,7 @@ impl fmt::Display for Character {
             }
         }
         table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-        write!(f, "{}\nStats:\n{}", self.health, table)
+        write!(f, "{}", table)
     }
 }
 

@@ -23,8 +23,8 @@ Examples:
 
 You can also edit a character reference with the following commands:
 
-* !character print
-* !character edit <name> <value>
+* !stats print|show
+* !stats edit <name> <value>
 
 Then, you can roll using those references, like:
 
