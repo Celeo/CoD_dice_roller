@@ -20,7 +20,7 @@ use crate::util::{
 const CHANCE: &str = "chance";
 
 lazy_static! {
-    static ref REGEX_NUMERIC: Regex = Regex::new(r#"\d+"#).unwrap();
+    static ref REGEX_NUMERIC: Regex = Regex::new(r#"^\d+$"#).unwrap();
     static ref REGEX_WHITESPACE: Regex = Regex::new(r#"\W{2,}"#).unwrap();
     static ref REGEX_AGAIN: Regex = Regex::new(r#"^(?:no)?\d+again$"#).unwrap();
 }
