@@ -1,6 +1,6 @@
 /target
 merits
 .env
-data.json
+data.json*
 test-data.json
 .vscode

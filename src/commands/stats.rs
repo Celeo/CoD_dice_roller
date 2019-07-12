@@ -18,7 +18,6 @@ pub fn stats(context: &mut Context, message: &Message, args: Args) -> CommandRes
     let username = &message.author.name;
     let mut cs = CharacterStore::from_file(&LOAD_PATH).unwrap();
     let character = cs.get_mut(username);
-    debug!("Stats command, first arg is {}", first_arg);
     if first_arg == "print" || first_arg == "show" {
         let response = MessageBuilder::new()
             .push_codeblock(&character, None)
