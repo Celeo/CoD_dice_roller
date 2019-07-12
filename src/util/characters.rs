@@ -1,12 +1,7 @@
 use failure::Error;
 use prettytable::{cell, format, row, Table};
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::HashMap,
-    fmt,
-    fs,
-    path::Path,
-};
+use std::{collections::HashMap, fmt, fs, path::Path};
 
 /// Represents a character's health.
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -283,6 +278,12 @@ mod test {
                         "manipulation": 1,
                         "composure": 3,
                         "academics": 0
+                    },
+                    "health": {
+                        "max": 0,
+                        "bashing": 0,
+                        "lethal": 0,
+                        "aggravated": 0
                     }
                 }
             ]
@@ -308,7 +309,7 @@ mod test {
         cs.save(output_path.as_path()).unwrap();
 
         let read_back = fs::read_to_string(output_path.as_path()).unwrap();
-        let expected = r#"{"characters":[{"name":"A","stats":{"a":100}}]}"#;
+        let expected = r#"{"characters":[{"name":"A","stats":{"a":100},"health":{"max":0,"bashing":0,"lethal":0,"aggravated":0}}]}"#;
         assert_eq!(read_back, expected);
     }
 

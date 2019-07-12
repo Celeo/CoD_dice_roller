@@ -1,6 +1,9 @@
 use lazy_static::lazy_static;
 use log::debug;
-use rand::{distributions::{Distribution, Uniform}, thread_rng};
+use rand::{
+    distributions::{Distribution, Uniform},
+    thread_rng,
+};
 use regex::Regex;
 use serenity::{
     client::Context,
@@ -9,7 +12,10 @@ use serenity::{
     utils::MessageBuilder,
 };
 use std::{collections::HashMap, fmt};
-use crate::util::{constants::LOAD_PATH, characters::{Character, CharacterStore}};
+use crate::util::{
+    constants::LOAD_PATH,
+    characters::{Character, CharacterStore},
+};
 
 const CHANCE: &str = "chance";
 
@@ -140,7 +146,7 @@ struct AttribRollResult {
     attribs_not_found: Vec<String>,
 }
 
-fn roll_attribs(name: &str, line: &str) -> AttribRollResult {
+fn roll_attribs(character: &Character, line: &str) -> AttribRollResult {
     let mut attributes = HashMap::new();
     let mut attribs_not_found = vec![];
     let again_parts: Vec<&str> = line
@@ -165,12 +171,6 @@ fn roll_attribs(name: &str, line: &str) -> AttribRollResult {
         if REGEX_NUMERIC.is_match(&part) {
             pool += part.parse::<i64>().unwrap() * i64::from(multiplier);
         } else if part != "+" {
-            let cs = CharacterStore::from_file(&LOAD_PATH).unwrap();
-            let new_character = Character::new(&name);
-            let character = match cs.get(&name) {
-                Some(c) => c,
-                None => &new_character,
-            };
             let (found, val) = character.get_value(part);
             if !found {
                 attribs_not_found.push(part.to_owned());
@@ -246,10 +246,13 @@ pub fn roll(context: &mut Context, message: &Message, args: Args) -> CommandResu
         };
         message.channel_id.say(&context.http, &response)?;
     } else {
-        let attrib_result = roll_attribs(
-            &message.author.name,
-            &message.content.trim().replace("!roll ", ""),
-        );
+        let cs = CharacterStore::from_file(&LOAD_PATH).unwrap();
+        let new_character = Character::new(&message.author.name);
+        let character = match cs.get(&message.author.name) {
+            Some(c) => c,
+            None => &new_character,
+        };
+        let attrib_result = roll_attribs(&character, &message.content.trim().replace("!roll ", ""));
         let roll_result = roll_dice(&attrib_result.pool.to_string(), &attrib_result.modifier);
         let mut builder = MessageBuilder::new()
             .mention(&message.author)
@@ -294,6 +297,7 @@ pub fn roll(context: &mut Context, message: &Message, args: Args) -> CommandResu
 #[cfg(test)]
 mod test {
     use super::{count_successes, mod_for_str, Roll, roll_again, roll_attribs, RollModifier};
+    use crate::util::characters::Character;
 
     #[test]
     fn test_mod_for_str() {
@@ -356,10 +360,19 @@ mod test {
     #[test]
     fn test_roll_attribs() {
         let s = "  strength +  athletics- 1 9again";
-        let res = roll_attribs("", &s);
+        let mut c = Character::new("");
+        let res = roll_attribs(&c, &s);
 
         assert_eq!(res.pool, -1);
         assert_eq!(res.modifier, RollModifier::Again9);
-        assert_eq!(res.attribs_not_found, vec!["strength", "athletics"])
+        assert_eq!(res.attribs_not_found, vec!["strength", "athletics"]);
+
+        c.set_value("strength", 3);
+        c.set_value("athletics", 1);
+        let res = roll_attribs(&c, &s);
+
+        assert_eq!(res.pool, 3);
+        assert_eq!(res.modifier, RollModifier::Again9);
+        assert!(res.attribs_not_found.is_empty());
     }
 }
